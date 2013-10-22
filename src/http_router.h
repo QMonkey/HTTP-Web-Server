@@ -1,14 +1,13 @@
 #ifndef HTTP_ROUTER_H
 #define HTTP_ROUTER_H
 
-typedef int (*HTTP_handler)(HTTP_reqest*,HTTP_response*);
-
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
-extern int HTTP_route(HTTP_handler *handler);
+extern int HTTP_init_router();
+extern int (*)(HTTP_request*,HTTP_response*) HTTP_route(char *url);
 
 #ifdef __cplusplus
 }

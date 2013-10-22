@@ -25,37 +25,76 @@ HTTP_node* HTTP_insert_node(HTTP_node **node,char *url,
 	{
 		return NULL;
 	}
-	if(*url == '/')
+
+	char *ptr = url;
+	while(*ptr != '/' && *ptr != 0)
 	{
-		HTTP_insert_node(node,url+1,handler);
+		++ptr;
 	}
-	else
+	int32_t size = ptr - url + (*ptr ? 1 : 0);
+	int flag = 0;
+	do
 	{
-		char *ptr = url;
-		while(*ptr != '/' && *ptr != 0)
-		{
-			++ptr;
-		}
-		int32_t length = ptr-url;
 		if(**node == NULL)
 		{
-			*node = HTTP_create_node3(url,length,
-				*ptr ? handler : DEFAULT_HANDLER);
+			*node = HTTP_create_node3(url,size,
+				*ptr ? handler : NULL);
 			HTTP_insert_node(&((*node)->child),ptr+1,handler);
 		}
-		else if(!HTTP_strcmp((*node)->key,url,length))
+		else if(!(flag = HTTP_strcmp((*node)->key,url,size)))
 		{
 			HTTP_insert_node(&((*node)->child),ptr+1,handler);
 		}
 		else
 		{
-			HTTP_insert_node(&((*node)->sibling),url,handler);
+			node = &((*node)->sibling);
+//			HTTP_insert_node(&((*node)->sibling),url,handler);
 		}
 	}
+	while(flag);
 }
 
 HTTP_node* HTTP_find_node(HTTP_node *head,char *url)
 {
+}
+
+int (*)(HTTP_request*,HTTP_response) HTTP_node_value(HTTP_node *node,char *url)
+{
+	if(node == NULL || url == NULL || *url == 0)
+	{
+		return NULL;
+	}
+
+	char *ptr = url;
+	while(*ptr != '/' && *ptr != 0)
+	{
+		++ptr;
+	}
+	int32_t size = ptr - url + (*ptr ? 1 : 0);
+	int (*handler)(HTTP_request*,HTTP_response*) = NULL;
+	int flag = 0;
+	do
+	{
+		if(!(flag = HTTP_strcmp(node->key,url,size)))
+		{
+			if(*ptr == 0 || *ptr == '/' && *(ptr+1) == 0)
+			{
+				handler = node->handler;
+			}
+			else
+			{
+				handler = HTTP_node_value(node->child,ptr+1);
+			}
+		}
+		else
+		{
+//			handler = HTTP_node_value(node->sibling,url);
+			node = node->sibling;
+		}
+	}
+	while(flag && node != NULL);
+
+	return handler;
 }
 
 int HTTP_destroy_tree(HTTP_node *head)
