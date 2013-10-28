@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
+typedef int (*HTTP_Handler)(HTTP_socket*,HTTP_socket*);
+
 typedef struct HTTP_urltree_node
 {
 	struct HTTP_urltree_node *child;
@@ -22,7 +24,7 @@ extern HTTP_node* HTTP_create_node3(char *key,int32_t size,
 extern HTTP_node* HTTP_insert_node(HTTP_node **node,char *url,
 	int (*handler)(HTTP_socket*,HTTP_socket*));
 extern HTTP_node* HTTP_find_node(HTTP_node *head,char *url);
-extern int (*)(HTTP_socket*,HTTP_socket*) HTTP_node_value(HTTP_node *head,char *url);
+extern HTTP_Handler HTTP_node_value(HTTP_node *head,char *url);
 extern int HTTP_destroy_tree(HTTP_node *head);
 extern int HTTP_destroy_node(HTTP_node *node);
 

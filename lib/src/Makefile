@@ -1,5 +1,5 @@
-PROG = ../main
-OBJS = main.o http_server.o http_socket.o http_string.o
+PROG = ../../HTTP_Web_Server
+OBJS = main.o http_server.o http_socket.o http_string.o http_urltree.o http_router.o
 CC = gcc
 
 all: $(PROG)

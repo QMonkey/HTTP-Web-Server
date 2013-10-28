@@ -1,7 +1,7 @@
 #ifndef HTTP_STRING_H
 #define HTTP_STRING_H
 
-#include <stdio.h>
+#include <stdint.h>
 
 typedef struct
 {

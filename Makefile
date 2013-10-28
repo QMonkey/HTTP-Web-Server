@@ -8,4 +8,5 @@ $(PROG):
 	make -C src
 
 clean:
-	-rm -rf $(PROG)
+	make clean -C lib/src
+	make clean -C src

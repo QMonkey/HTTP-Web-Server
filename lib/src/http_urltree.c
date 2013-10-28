@@ -1,4 +1,9 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include "http_string.h"
+#include "http_socket.h"
 #include "http_urltree.h"
 
 HTTP_node* HTTP_create_node(char *key,int (*handler)(HTTP_socket*,HTTP_socket*))
@@ -34,7 +39,7 @@ HTTP_node* HTTP_insert_node(HTTP_node **node,char *url,
 	int flag = 0;
 	do
 	{
-		if(**node == NULL)
+		if(*node == NULL)
 		{
 			*node = HTTP_create_node3(url,size,
 				*ptr ? handler : NULL);
@@ -57,7 +62,7 @@ HTTP_node* HTTP_find_node(HTTP_node *head,char *url)
 {
 }
 
-int (*)(HTTP_request*,HTTP_response) HTTP_node_value(HTTP_node *node,char *url)
+HTTP_Handler HTTP_node_value(HTTP_node *node,char *url)
 {
 	if(node == NULL || url == NULL || *url == 0)
 	{
@@ -70,7 +75,7 @@ int (*)(HTTP_request*,HTTP_response) HTTP_node_value(HTTP_node *node,char *url)
 		++ptr;
 	}
 	int32_t size = ptr - url + (*ptr ? 1 : 0);
-	int (*handler)(HTTP_request*,HTTP_response*) = NULL;
+	int (*handler)(HTTP_socket*,HTTP_socket*) = NULL;
 	int flag = 0;
 	do
 	{
