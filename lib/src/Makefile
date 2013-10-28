@@ -9,7 +9,8 @@ $(PROG): $(OBJS)
 	make -C test
 
 $(OBJS): %.o:%.c
-	$(CC) -g -c $< -I ../include
+	$(CC) -g -c $< -I ../include -I ../../include
 
 clean:
+	make clean -C test
 	-rm -rf $(PROG) $(OBJS)

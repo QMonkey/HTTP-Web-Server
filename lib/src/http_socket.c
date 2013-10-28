@@ -26,7 +26,7 @@ int HTTP_set_header(HTTP_socket *http_socket,char *header)
 
 int32_t HTTP_get_header(HTTP_socket *http_socket,char *key,int32_t size,char *content)
 {
-	HTTP_seek(http_socket->buffer,HTTP_BEGIN,0);
+	HTTP_seek(http_socket->buffer,HTTP_STRING_BEGIN,0);
 	char *temp = (char*)malloc(size);
 	int32_t rd = 0;
 	while(!(rd = HTTP_readline(http_socket->buffer,temp)))
@@ -54,7 +54,7 @@ int HTTP_set_content(HTTP_socket *http_socket,char *content)
 
 int32_t HTTP_get_content(HTTP_socket *http_socket,char *content)
 {
-	HTTP_seek(http_socket->buffer,HTTP_BEGIN,0);
+	HTTP_seek(http_socket->buffer,HTTP_STRING_BEGIN,0);
 	while(!HTTP_readline(http_socket->buffer,content))
 	{
 	}

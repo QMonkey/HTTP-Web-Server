@@ -25,7 +25,7 @@ HTTP_node* HTTP_create_node3(char *key,int32_t size,
 HTTP_node* HTTP_insert_node(HTTP_node **node,char *url,
 	int (*handler)(HTTP_socket*,HTTP_socket*))
 {
-	if(url == NULL || *url == 0)
+	if(node == NULL || url == NULL || *url == 0)
 	{
 		return NULL;
 	}
@@ -37,25 +37,34 @@ HTTP_node* HTTP_insert_node(HTTP_node **node,char *url,
 	}
 	int32_t size = ptr - url + (*ptr ? 1 : 0);
 	int flag = 0;
+	HTTP_node *ret_node = NULL;
 	do
 	{
+		flag = 0;
 		if(*node == NULL)
 		{
 			*node = HTTP_create_node3(url,size,
-				*ptr ? handler : NULL);
-			HTTP_insert_node(&((*node)->child),ptr+1,handler);
+				*ptr != 0 ? NULL : handler);
+			ret_node = HTTP_insert_node(&((*node)->child),ptr + (*ptr != 0 ? 1 : 0),handler);
+			if(*ptr == 0)
+			{
+				ret_node = *node;
+			}
 		}
-		else if(!(flag = HTTP_strcmp((*node)->key,url,size)))
+		else if(!HTTP_strcmp((*node)->key,url,size))
 		{
-			HTTP_insert_node(&((*node)->child),ptr+1,handler);
+			ret_node = HTTP_insert_node(&((*node)->child),ptr+1,handler);
 		}
 		else
 		{
 			node = &((*node)->sibling);
+			flag = 1;
 //			HTTP_insert_node(&((*node)->sibling),url,handler);
 		}
 	}
 	while(flag);
+
+	return ret_node;
 }
 
 HTTP_node* HTTP_find_node(HTTP_node *head,char *url)
@@ -79,7 +88,8 @@ HTTP_Handler HTTP_node_value(HTTP_node *node,char *url)
 	int flag = 0;
 	do
 	{
-		if(!(flag = HTTP_strcmp(node->key,url,size)))
+		flag = 0;
+		if(!HTTP_strcmp(node->key,url,size))
 		{
 			if(*ptr == 0 || *ptr == '/' && *(ptr+1) == 0)
 			{
@@ -94,9 +104,10 @@ HTTP_Handler HTTP_node_value(HTTP_node *node,char *url)
 		{
 //			handler = HTTP_node_value(node->sibling,url);
 			node = node->sibling;
+			flag = 1;
 		}
 	}
-	while(flag && node != NULL);
+	while(flag);
 
 	return handler;
 }

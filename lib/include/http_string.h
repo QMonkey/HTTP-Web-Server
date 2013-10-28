@@ -12,9 +12,9 @@ typedef struct
 	char *content;
 } HTTP_string;
 
-#define HTTP_BEGIN 0
-#define HTTP_CURRENT 1
-#define HTTP_END 2
+#define HTTP_STRING_BEGIN 0
+#define HTTP_STRING_CURRENT 1
+#define HTTP_STRING_END 2
 
 #ifdef __cplusplus
 extern "C"

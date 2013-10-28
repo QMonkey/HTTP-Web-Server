@@ -36,12 +36,12 @@ int32_t HTTP_seek(HTTP_string *str,int32_t flag,int32_t offset)
 {
 	switch(flag)
 	{
-	case HTTP_BEGIN:
+	case HTTP_STRING_BEGIN:
 		break;
-	case HTTP_CURRENT:
+	case HTTP_STRING_CURRENT:
 		offset += str->current - str->begin;
 		break;
-	case HTTP_END:
+	case HTTP_STRING_END:
 		offset += HTTP_capacity(str);
 		break;
 	default:
@@ -127,8 +127,8 @@ int32_t HTTP_read(HTTP_string *str,char *dest)
 	}
 
 	int32_t size = str->capacity_end - str->current;
-	str->current = str->capacity_end;
 	memcpy(dest,str->current,size);
+	str->current = str->capacity_end;
 
 	return size;
 }
