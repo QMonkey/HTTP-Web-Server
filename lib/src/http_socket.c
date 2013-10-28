@@ -24,12 +24,12 @@ int HTTP_set_header(HTTP_socket *http_socket,char *header)
 	return 0;
 }
 
-int32_t HTTP_get_header(HTTP_socket *http_socket,char *key,int32_t *size,char *content)
+int32_t HTTP_get_header(HTTP_socket *http_socket,char *key,int32_t size,char *content)
 {
-	HTTP_seek(HTTP_BEGIN);
+	HTTP_seek(http_socket->buffer,HTTP_BEGIN,0);
 	char *temp = (char*)malloc(size);
 	int32_t rd = 0;
-	while(!(rd = HTTP_readline(http_socket,temp)))
+	while(!(rd = HTTP_readline(http_socket->buffer,temp)))
 	{
 		char *scanner = temp;
 		char *end = temp + rd;
@@ -54,11 +54,11 @@ int HTTP_set_content(HTTP_socket *http_socket,char *content)
 
 int32_t HTTP_get_content(HTTP_socket *http_socket,char *content)
 {
-	HTTP_seek(HTTP_BEGIN);
-	while(!HTTP_readline(http_socket,content))
+	HTTP_seek(http_socket->buffer,HTTP_BEGIN,0);
+	while(!HTTP_readline(http_socket->buffer,content))
 	{
 	}
-	return HTTP_read(http_socket,content);
+	return HTTP_read(http_socket->buffer,content);
 }
 
 int HTTP_destroy_socket(HTTP_socket *http_socket)

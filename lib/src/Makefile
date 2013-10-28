@@ -6,9 +6,10 @@ all: $(PROG)
 
 $(PROG): $(OBJS)
 	$(CC) -g -o $@ *.o -lpthread
+	make -C test
 
 $(OBJS): %.o:%.c
-	$(CC) -g -c $<
+	$(CC) -g -c $< -I ../include
 
 clean:
 	-rm -rf $(PROG) $(OBJS)
