@@ -1,3 +1,6 @@
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <unistd.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
@@ -24,24 +27,31 @@ int HTTP_set_header(HTTP_socket *http_socket,char *header)
 	return 0;
 }
 
-int32_t HTTP_get_header(HTTP_socket *http_socket,char *key,int32_t size,char *content)
+int32_t HTTP_get_header(HTTP_socket *http_socket,char *key,char *content)
 {
 	HTTP_seek(http_socket->buffer,HTTP_STRING_BEGIN,0);
-	char *temp = (char*)malloc(size);
 	int32_t rd = 0;
-	while(!(rd = HTTP_readline(http_socket->buffer,temp)))
+	int32_t hsize = 0;
+	while(rd = HTTP_readline(http_socket->buffer,content))
 	{
-		char *scanner = temp;
-		char *end = temp + rd;
-		while(scanner != end && *scanner != ':')
+		int32_t size = strlen(key);
+		if(!memcmp(key,content,size))
 		{
-			++scanner;
-		}
-		while(*--scanner)
-		{
+			char *scanner = content + size;
+			while(*scanner == ' ')
+			{
+				++scanner;
+			}
+			if(*scanner == ':')
+			{
+				scanner += 2;
+				hsize = rd - (scanner - content);
+				memmove(content,scanner,hsize);
+				break;
+			}
 		}
 	}
-	free(temp);
+	return hsize;
 }
 
 int HTTP_set_content(HTTP_socket *http_socket,char *content)
@@ -55,9 +65,7 @@ int HTTP_set_content(HTTP_socket *http_socket,char *content)
 int32_t HTTP_get_content(HTTP_socket *http_socket,char *content)
 {
 	HTTP_seek(http_socket->buffer,HTTP_STRING_BEGIN,0);
-	while(!HTTP_readline(http_socket->buffer,content))
-	{
-	}
+	while(HTTP_readline(http_socket->buffer,content));
 	return HTTP_read(http_socket->buffer,content);
 }
 
@@ -67,7 +75,8 @@ int HTTP_destroy_socket(HTTP_socket *http_socket)
 	{
 		return -1;
 	}
-	free(http_socket->buffer);
+	close(http_socket->sfd);
+	HTTP_destroy_string(http_socket->buffer);
 	free(http_socket);
 	return 0;
 }

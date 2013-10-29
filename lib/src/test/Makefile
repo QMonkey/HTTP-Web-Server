@@ -1,6 +1,6 @@
-PROG = test_string test_urltree
-OBJS = test_string.o test_urltree.o
-LIBOBJS = ../http_string.o ../http_urltree.o
+PROG = test_string test_urltree test_socket
+OBJS = test_string.o test_urltree.o test_socket.o
+LIBOBJS = ../http_string.o ../http_urltree.o ../http_socket.o ../http_request.o
 CC = gcc
 
 all: $(PROG)
@@ -10,6 +10,9 @@ test_string: test_string.o
 
 test_urltree: test_urltree.o
 	$(CC) -g -o $@ test_urltree.o $(LIBOBJS) 
+
+test_socket: test_socket.o
+	$(CC) -g -o $@ test_socket.o $(LIBOBJS) -lpthread
 
 $(OBJS): %.o:%.c
 	$(CC) -g -c $< -I ../../include

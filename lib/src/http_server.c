@@ -10,25 +10,30 @@
 #include <string.h>
 
 #include "http_server.h"
+#include "http_socket.h"
+#include "http_request.h"
+#include "http_response.h"
+#include "http_router.h"
 
 #define MAX_SOCKET 1024
+#define BUFFER_LENGTH 4096
 
-static void* proc(void *args)
+static void* proc(void *arg)
 {
-	int sfd = *(int*)args;
-	char buffer[4096];
-	int rd;
-	if((rd = read(sfd,buffer,4096)) == -1)
-	{
-		perror("read");
-	}
-	write(STDOUT_FILENO,buffer,rd);
-	write(STDOUT_FILENO,"\n",1);
-	if(write(sfd,buffer,rd) == -1)
-	{
-		perror("write");
-	}
-	close(sfd);
+	HTTP_socket **http_sockets = (HTTP_socket**)arg;
+	HTTP_socket *request = http_sockets[0];
+	HTTP_socket *response = http_sockets[1];
+
+	HTTP_request_init(request);
+	char url[BUFFER_LENGTH] = {0};
+	int32_t size = HTTP_request_get_url(request,url);
+	url[size] = 0;
+	HTTP_route(url)(request,response);
+
+	HTTP_destroy_socket(request);
+	HTTP_destroy_socket(response);
+	free(http_sockets);
+	return NULL;
 }
 
 int HTTP_serve()
@@ -57,6 +62,7 @@ int HTTP_serve()
 		perror("listen");
 		exit(1);
 	}
+	HTTP_init_router();
 	while(1)
 	{
 		struct sockaddr addr;
@@ -66,7 +72,10 @@ int HTTP_serve()
 		{
 			continue;
 		}
-		pthread_create(malloc(sizeof(pthread_t)),NULL,proc,&clientsfd);
+		HTTP_socket **http_sockets = (HTTP_socket**)malloc(sizeof(HTTP_socket*) * 2);
+		http_sockets[0] = HTTP_create_socket(clientsfd);
+		http_sockets[1] = HTTP_create_socket(clientsfd);
+		pthread_create(malloc(sizeof(pthread_t)),NULL,proc,http_sockets);
 /*
 		if(!fork())
 		{

@@ -4,8 +4,8 @@ CC = gcc
 all: $(PROG)
 
 $(PROG): 
-	make -C lib/src
 	make -C src
+	make -C lib/src
 
 clean:
 	make clean -C lib/src
