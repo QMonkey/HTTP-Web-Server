@@ -7,6 +7,7 @@ extern "C"
 #endif
 
 extern int error404_handler(HTTP_socket *request,HTTP_socket *response);
+//extern int _handler(HTTP_socket *request,HTTP_socket *response);
 
 #ifdef __cplusplus
 }
