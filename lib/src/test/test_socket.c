@@ -63,6 +63,6 @@ int main()
 		HTTP_socket *http_socket = HTTP_create_socket(cfd);
 		pthread_create(malloc(sizeof(pthread_t)),NULL,proc,http_socket);
 	}
-
+	close(sfd);
 	return 0;
 }

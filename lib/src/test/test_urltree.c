@@ -46,12 +46,22 @@ int main()
 	HTTP_node_value(head,url)(NULL,NULL);
 
 	strcpy(url,"/demo/http/web/index.html");
-
 	fprintf(stdout,"HTTP_insert_node:\t");
 	HTTP_insert_node(&head,url,web_index_handler)->handler(NULL,NULL);
 
 	fprintf(stdout,"HTTP_node_value:\t%s\t",url);
 	HTTP_node_value(head,url)(NULL,NULL);
+
+
+	strcpy(url,"/demo/http/web/");
+	fprintf(stdout,"HTTP_insert_node:\t");
+	HTTP_insert_node(&head,url,web_index_handler)->handler(NULL,NULL);
+
+	fprintf(stdout,"HTTP_node_value:\t%s\t",url);
+	HTTP_node_value(head,url)(NULL,NULL);
+
+	fprintf(stdout,"HTTP_node_value:\t%s\t","/home");
+	HTTP_node_value(head,"/home");
 
 	HTTP_destroy_tree(head);
 	return 0;

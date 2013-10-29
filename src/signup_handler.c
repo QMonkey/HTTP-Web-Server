@@ -4,8 +4,8 @@
 #include "http_request.h"
 #include "http_response.h"
 
-int error404_handler(HTTP_socket *request,HTTP_socket *response)
+int signup_handler(HTTP_socket *request,HTTP_socket *response)
 {
-	fprintf(stdout,"error404\n");
+	fprintf(stdout,"signup\n");
 	return 0;
 }

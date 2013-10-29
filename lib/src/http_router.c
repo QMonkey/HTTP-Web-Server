@@ -10,6 +10,10 @@ static HTTP_node *head = NULL;
 
 int HTTP_init_router()
 {
+	HTTP_insert_node(&head,"/html/",index_handler);
+	HTTP_insert_node(&head,"/html/index.html",index_handler);
+	HTTP_insert_node(&head,"/html/signIn.html",signin_handler);
+	HTTP_insert_node(&head,"/html/signUp.html",signup_handler);
 }
 
 HTTP_Handler HTTP_route(char *url)
