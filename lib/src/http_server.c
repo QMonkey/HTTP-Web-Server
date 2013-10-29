@@ -1,5 +1,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/wait.h>
+#include <signal.h>
 #include <unistd.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
@@ -18,11 +20,22 @@
 #define MAX_SOCKET 1024
 #define BUFFER_LENGTH 4096
 
+static void signal_proc(int signo)
+{
+	pid_t pid;
+	int status;
+	if(signo == SIGCHLD)
+	{
+		while((pid = waitpid(-1,&status,WNOHANG)) > 0);
+	}
+	return;
+}
+/*
 static void* proc(void *arg)
 {
-	HTTP_socket **http_sockets = (HTTP_socket**)arg;
-	HTTP_socket *request = http_sockets[0];
-	HTTP_socket *response = http_sockets[1];
+	int sfd = (int)arg;
+	HTTP_socket *request = HTTP_create_socket(sfd);
+	HTTP_socket *response = HTTP_create_socket(sfd);
 
 	HTTP_request_init(request);
 	char url[BUFFER_LENGTH] = {0};
@@ -32,12 +45,40 @@ static void* proc(void *arg)
 
 	HTTP_destroy_socket(request);
 	HTTP_destroy_socket(response);
-	free(http_sockets);
 	return NULL;
+}
+*/
+
+static void handle(int sfd)
+{
+	HTTP_socket *request = HTTP_create_socket(sfd);
+	HTTP_socket *response = HTTP_create_socket(sfd);
+
+	HTTP_request_init(request);
+	char url[BUFFER_LENGTH] = {0};
+	int32_t size = HTTP_request_get_url(request,url);
+	fprintf(stdout,"%s\n",url);
+	url[size] = 0;
+	HTTP_route(url)(request,response);
+
+	HTTP_destroy_socket(request);
+	HTTP_destroy_socket(response);
 }
 
 int HTTP_serve()
 {
+	struct sigaction action;
+	action.sa_handler = signal_proc;
+	sigemptyset(&action.sa_mask);
+	action.sa_flags = 0;
+	action.sa_flags |= SA_INTERRUPT;
+	action.sa_flags |= SA_RESTART;
+	if(sigaction(SIGCHLD,&action,NULL) == -1)
+	{
+		perror("sigaction");
+		exit(1);
+	}
+
 	int serversfd = socket(AF_INET,SOCK_STREAM,0);
 	if(serversfd == -1)
 	{
@@ -72,23 +113,17 @@ int HTTP_serve()
 		{
 			continue;
 		}
-		HTTP_socket **http_sockets = (HTTP_socket**)malloc(sizeof(HTTP_socket*) * 2);
-		http_sockets[0] = HTTP_create_socket(clientsfd);
-		http_sockets[1] = HTTP_create_socket(clientsfd);
-		pthread_create(malloc(sizeof(pthread_t)),NULL,proc,http_sockets);
-/*
+//		pthread_create(malloc(sizeof(pthread_t)),NULL,proc,(void*)clientsfd);
 		if(!fork())
 		{
-			char msg[] = "<h1>Hello! Nice to meet you!</h1>";
-			if(write(clientsfd,msg,sizeof(msg)) == -1)
-			{
-				perror("write");
-			}
-			fprintf(stdout,"A connection comming.\n");
+			handle(clientsfd);
 		}
-		close(clientsfd);
-*/
+		else
+		{
+			shutdown(clientsfd,SHUT_RDWR);
+		}
 	}
 	close(serversfd);
+	HTTP_destroy_router();
 	return 0;
 }

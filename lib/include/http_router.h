@@ -10,6 +10,7 @@ extern "C"
 
 extern int HTTP_init_router();
 extern HTTP_Handler HTTP_route(char *url);
+extern int HTTP_destroy_router();
 
 #ifdef __cplusplus
 }

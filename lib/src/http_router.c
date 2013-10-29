@@ -21,3 +21,8 @@ HTTP_Handler HTTP_route(char *url)
 	int (*handler)(HTTP_socket*,HTTP_socket*) = HTTP_node_value(head,url);
 	return handler != NULL ? handler : error404_handler;
 }
+
+int HTTP_destroy_router()
+{
+	return HTTP_destroy_tree(head);
+}

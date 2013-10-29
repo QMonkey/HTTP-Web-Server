@@ -11,7 +11,7 @@ int HTTP_response_flush(HTTP_socket *response)
 		return -1;
 	}
 
-	write(response->sfd,response->buffer->content,HTTP_capacity(response->buffer));
+	send(response->sfd,response->buffer->content,HTTP_capacity(response->buffer),0);
 	return 0;
 }
 

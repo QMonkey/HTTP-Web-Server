@@ -14,7 +14,8 @@
 
 void* proc(void *arg)
 {
-	HTTP_socket *http_socket = (HTTP_socket*)arg;
+	int cfd = (int)arg;
+	HTTP_socket *http_socket = HTTP_create_socket(cfd);
 	char content[1000] = {0};
 	HTTP_request_init(http_socket);
 	HTTP_read(http_socket->buffer,content);
@@ -60,8 +61,7 @@ int main()
 			perror("accept");
 			continue;
 		}
-		HTTP_socket *http_socket = HTTP_create_socket(cfd);
-		pthread_create(malloc(sizeof(pthread_t)),NULL,proc,http_socket);
+		pthread_create(malloc(sizeof(pthread_t)),NULL,proc,(void*)cfd);
 	}
 	close(sfd);
 	return 0;
