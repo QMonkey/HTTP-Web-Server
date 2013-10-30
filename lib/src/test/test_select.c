@@ -29,13 +29,27 @@ int main()
 		exit(1);
 	}
 
-	fd_set rfds;
-	FD_ZERO(&rfds);
-	FD_SET(sfd,&rfds);
+	if(listen(sfd,50) == -1)
+	{
+		perror("listen");
+		exit(1);
+	}
 
+	char content[1024] = {0};
+	int32_t rd = 0;
 	while(1)
 	{
-		switch(select(sfd+1,&rfds,NULL,NULL,NULL))
+		int cfd = accept(sfd,NULL,NULL);
+		if(cfd == -1)
+		{
+			perror("accept");
+			continue;
+		}
+
+		fd_set rfds;
+		FD_ZERO(&rfds);
+		FD_SET(cfd,&rfds);
+		switch(select(cfd+1,&rfds,NULL,NULL,NULL))
 		{
 			case -1:
 				perror("select");
@@ -45,6 +59,15 @@ int main()
 				continue;
 				break;
 			default:
+				if(FD_ISSET(cfd,&rfds))
+				{
+					rd = recv(cfd,content,1024,MSG_DONTWAIT);
+					write(STDOUT_FILENO,content,rd);
+					send(cfd,content,rd,MSG_DONTWAIT);
+				}
+				close(cfd);
+				FD_ZERO(&rfds);
+				break;
 		}
 	}
 

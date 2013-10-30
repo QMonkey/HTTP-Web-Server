@@ -1,3 +1,5 @@
+#include <sys/socket.h>
+
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
@@ -15,7 +17,7 @@ int HTTP_request_init(HTTP_socket *request)
 
 	char buffer[DEFAULT_BUFFER_LENGTH] = {0};
 	int rd = 0;
-	while((rd = recv(request->sfd,buffer,DEFAULT_BUFFER_LENGTH,0)) > 0)
+	while((rd = recv(request->sfd,buffer,DEFAULT_BUFFER_LENGTH,MSG_DONTWAIT)) > 0)
 	{
 		HTTP_write(request->buffer,buffer,rd);
 	}

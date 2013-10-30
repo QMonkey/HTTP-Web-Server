@@ -69,13 +69,13 @@ int32_t HTTP_get_content(HTTP_socket *http_socket,char *content)
 	return HTTP_read(http_socket->buffer,content);
 }
 
-int HTTP_destroy_socket(HTTP_socket *http_socket)
+int HTTP_destroy_socket(HTTP_socket *http_socket,int how)
 {
 	if(http_socket == NULL)
 	{
 		return -1;
 	}
-	close(http_socket->sfd);
+	shutdown(http_socket->sfd,how);
 	HTTP_destroy_string(http_socket->buffer);
 	free(http_socket);
 	return 0;

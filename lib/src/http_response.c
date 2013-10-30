@@ -1,3 +1,4 @@
+#include <sys/socket.h>
 #include <unistd.h>
 
 #include "http_string.h"
@@ -11,7 +12,7 @@ int HTTP_response_flush(HTTP_socket *response)
 		return -1;
 	}
 
-	send(response->sfd,response->buffer->content,HTTP_capacity(response->buffer),0);
+	send(response->sfd,response->buffer->content,HTTP_capacity(response->buffer),MSG_DONTWAIT);
 	return 0;
 }
 

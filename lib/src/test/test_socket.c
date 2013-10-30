@@ -23,7 +23,7 @@ void* proc(void *arg)
 	int32_t size = HTTP_get_header(http_socket,"Accept",content);
 	write(STDOUT_FILENO,content,size);
 	fprintf(stdout,"\n");
-	HTTP_destroy_socket(http_socket);
+	HTTP_destroy_socket(http_socket,SHUT_RDWR);
 	return NULL;
 }
 

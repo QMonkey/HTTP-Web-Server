@@ -20,6 +20,7 @@
 #define MAX_SOCKET 1024
 #define BUFFER_LENGTH 4096
 
+/*
 static void signal_proc(int signo)
 {
 	pid_t pid;
@@ -30,25 +31,50 @@ static void signal_proc(int signo)
 	}
 	return;
 }
-/*
-static void* proc(void *arg)
-{
-	int sfd = (int)arg;
-	HTTP_socket *request = HTTP_create_socket(sfd);
-	HTTP_socket *response = HTTP_create_socket(sfd);
-
-	HTTP_request_init(request);
-	char url[BUFFER_LENGTH] = {0};
-	int32_t size = HTTP_request_get_url(request,url);
-	url[size] = 0;
-	HTTP_route(url)(request,response);
-
-	HTTP_destroy_socket(request);
-	HTTP_destroy_socket(response);
-	return NULL;
-}
 */
 
+static void* proc(void *arg)
+{
+	int cfd = (int)arg;
+	HTTP_socket *request = HTTP_create_socket(cfd);
+	HTTP_socket *response = HTTP_create_socket(cfd);
+
+	fd_set rfds;
+	FD_ZERO(&rfds);
+	FD_SET(cfd,&rfds);
+
+	int flag = 1;
+	while(flag)
+	{
+		char url[BUFFER_LENGTH] = {0};
+		int32_t size = 0;
+		switch(select(cfd+1,&rfds,NULL,NULL,NULL))
+		{
+			case -1:
+				perror("select");
+				break;
+			case 0:
+				break;
+			default:
+				if(FD_ISSET(cfd,&rfds))
+				{
+					HTTP_request_init(request);
+					size = HTTP_request_get_url(request,url);
+					url[size] = 0;
+					HTTP_route(url)(request,response);
+					flag = 0;
+				}
+				break;
+		}
+	}
+
+	FD_ZERO(&rfds);
+	HTTP_destroy_socket(request,SHUT_RD);
+	HTTP_destroy_socket(response,SHUT_WR);
+	return NULL;
+}
+
+/*
 static void handle(int sfd)
 {
 	HTTP_socket *request = HTTP_create_socket(sfd);
@@ -61,12 +87,14 @@ static void handle(int sfd)
 	url[size] = 0;
 	HTTP_route(url)(request,response);
 
-	HTTP_destroy_socket(request);
-	HTTP_destroy_socket(response);
+	HTTP_destroy_socket(request,SHUT_RD);
+	HTTP_destroy_socket(response,SHUT_WR);
 }
+*/
 
 int HTTP_serve()
 {
+/*
 	struct sigaction action;
 	action.sa_handler = signal_proc;
 	sigemptyset(&action.sa_mask);
@@ -78,7 +106,7 @@ int HTTP_serve()
 		perror("sigaction");
 		exit(1);
 	}
-
+*/
 	int serversfd = socket(AF_INET,SOCK_STREAM,0);
 	if(serversfd == -1)
 	{
@@ -113,7 +141,8 @@ int HTTP_serve()
 		{
 			continue;
 		}
-//		pthread_create(malloc(sizeof(pthread_t)),NULL,proc,(void*)clientsfd);
+		pthread_create(malloc(sizeof(pthread_t)),NULL,proc,(void*)clientsfd);
+/*
 		if(!fork())
 		{
 			handle(clientsfd);
@@ -122,6 +151,7 @@ int HTTP_serve()
 		{
 			shutdown(clientsfd,SHUT_RDWR);
 		}
+*/
 	}
 	close(serversfd);
 	HTTP_destroy_router();

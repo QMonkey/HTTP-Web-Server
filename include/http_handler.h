@@ -2,6 +2,7 @@
 #define HTTP_HANDLER_H
 
 #define ROOT(path) "public/" ## path
+#define VIEW_PATH(page) ROOT("html/") ## page
 
 #ifdef __cplusplus
 extern "C"
