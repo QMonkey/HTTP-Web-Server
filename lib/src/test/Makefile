@@ -1,5 +1,5 @@
-PROG = test_string test_urltree test_socket test_select test_access
-OBJS = test_string.o test_urltree.o test_socket.o test_select.o test_access.o
+PROG = test_string test_urltree test_socket test_select test_access test_regex
+OBJS = test_string.o test_urltree.o test_socket.o test_select.o test_access.o test_regex.o
 LIBOBJS = ../http_string.o ../http_urltree.o ../http_socket.o ../http_request.o
 CC = gcc
 

@@ -16,6 +16,10 @@ int HTTP_response_flush(HTTP_socket *response)
 	return 0;
 }
 
+int HTTP_response_set_param(HTTP_socket *response,HTTP_string *key,HTTP_string *value)
+{
+}
+
 int HTTP_response_set_header(HTTP_socket *response,char *header)
 {
 	return HTTP_set_header(response,header);

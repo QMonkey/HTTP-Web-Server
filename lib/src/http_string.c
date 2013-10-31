@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
+#include <regex.h>
 
 #include "http_string.h"
 
@@ -45,6 +46,11 @@ HTTP_string* HTTP_string_adjust_to(HTTP_string *src,HTTP_string *dest)
 	src->capacity_end = src->content + capacity;
 	memcpy(src->content,dest->content,capacity);
 	return src;
+}
+
+int32_t HTTP_offset(HTTP_string *str)
+{
+	return str->current - str->begin;
 }
 
 int32_t HTTP_size(HTTP_string *str)
@@ -114,18 +120,16 @@ int HTTP_strcmp(HTTP_string *str,char *cstr,int32_t size)
 	int res = memcmp(str->content,cstr,size < ssize ? size : ssize);
 	res = (!res && ssize != size ? 
 		(ssize > size ? str->content[size] : cstr[ssize]) : res);
-/*
-	if(!res && ssize != size)
-	{
-		res = ssize > size ? str->content[size] : cstr[ssize];
-	}
-*/
 	return res;
 }
 
 int HTTP_strcmp2(HTTP_string *first,HTTP_string *second)
 {
 	return HTTP_strcmp(first,second->content,HTTP_capacity(second));
+}
+
+int HTTP_string_replace(HTTP_string *str,HTTP_string *src,HTTP_string *dest)
+{
 }
 
 int32_t HTTP_readline(HTTP_string *str,char *dest)

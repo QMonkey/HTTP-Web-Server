@@ -6,7 +6,7 @@ extern "C"
 {
 #endif
 
-extern int render(HTTP_socket *response,char *page,HTTP_list_node *args);
+extern int render(HTTP_socket *response,char *path,HTTP_param_node *args);
 
 #ifdef __cplusplus
 }
