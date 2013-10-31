@@ -23,10 +23,13 @@ extern "C"
 
 extern HTTP_string* HTTP_create_string(int32_t size);
 extern HTTP_string* HTTP_create_string2(char *str,int32_t size);
+extern HTTP_string* HTTP_string_copy(HTTP_string *str);
+extern HTTP_string* HTTP_string_adjust_to(HTTP_string *src,HTTP_string *dest);
 extern int32_t HTTP_size(HTTP_string *str);
 extern int32_t HTTP_capacity(HTTP_string *str);
 extern int HTTP_seek(HTTP_string *str,int32_t flag,int32_t offset);
 extern int HTTP_strcmp(HTTP_string *str,char *cstr,int32_t size);
+extern int HTTP_strcmp2(HTTP_string *first,HTTP_string *second);
 extern int32_t HTTP_readline(HTTP_string *str,char *dest);
 extern int32_t HTTP_read(HTTP_string *str,char *dest);
 extern int32_t HTTP_writeline(HTTP_string *str,char *src,int32_t size);

@@ -3,6 +3,8 @@
 
 #include "http_string.h"
 
+static int HTTP_resize(HTTP_string *str,int32_t size);
+
 HTTP_string* HTTP_create_string(int32_t size)
 {
 	HTTP_string *str = (HTTP_string*)malloc(sizeof(HTTP_string));
@@ -20,6 +22,29 @@ HTTP_string* HTTP_create_string2(char *str,int32_t size)
 	HTTP_string *http_string = HTTP_create_string(size);
 	HTTP_write(http_string,str,size);
 	return http_string;
+}
+
+HTTP_string* HTTP_string_copy(HTTP_string *str)
+{
+	int32_t capacity = HTTP_capacity(str);
+	HTTP_string *strbak = HTTP_create_string2(str->content,capacity);
+	strbak->capacity_end = strbak->begin + capacity;
+	memcpy(strbak->content,str->content,capacity);
+	return strbak;
+}
+
+HTTP_string* HTTP_string_adjust_to(HTTP_string *src,HTTP_string *dest)
+{
+	if(src == NULL || dest == NULL)
+	{
+		return NULL;
+	}
+
+	HTTP_resize(src,HTTP_size(dest));
+	int32_t capacity = HTTP_capacity(dest);
+	src->capacity_end = src->content + capacity;
+	memcpy(src->content,dest->content,capacity);
+	return src;
 }
 
 int32_t HTTP_size(HTTP_string *str)
@@ -63,6 +88,10 @@ static int HTTP_resize(HTTP_string *str,int32_t size)
 	{
 		return -1;
 	}
+	if(size < HTTP_size(str))
+	{
+		return 0;
+	}
 
 	char *new_str = (char*)malloc(sizeof(char) * size);
 	int32_t capacity = HTTP_capacity(str);
@@ -92,6 +121,11 @@ int HTTP_strcmp(HTTP_string *str,char *cstr,int32_t size)
 	}
 */
 	return res;
+}
+
+int HTTP_strcmp2(HTTP_string *first,HTTP_string *second)
+{
+	return HTTP_strcmp(first,second->content,HTTP_capacity(second));
 }
 
 int32_t HTTP_readline(HTTP_string *str,char *dest)
