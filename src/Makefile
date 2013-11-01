@@ -1,4 +1,4 @@
-OBJS = error404_handler.o index_handler.o signin_handler.o signup_handler.o
+OBJS = error404_handler.o index_handler.o signin_handler.o signup_handler.o default_handler.o
 CC = gcc
 
 all: $(OBJS)

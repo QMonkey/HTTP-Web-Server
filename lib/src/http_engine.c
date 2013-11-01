@@ -38,11 +38,10 @@ static int HTTP_match_param(HTTP_string *buffer,HTTP_param_node *args,
 
 int HTTP_engine_render(HTTP_socket *response,char *path,HTTP_param_node *args)
 {
-	if(response == NULL || path == NULL)
+	if(response == NULL || path == NULL || HTTP_file_read_all(response->buffer,path) == -1)
 	{
 		return -1;
 	}
-	HTTP_file_read_all(response->buffer,path);
 /*
 	HTTP_string *buffer = HTTP_create_string(FILE_BUFFER_LENGTH);
 	HTTP_file_read_all(buffer,path);

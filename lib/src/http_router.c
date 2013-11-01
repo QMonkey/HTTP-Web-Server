@@ -19,7 +19,7 @@ int HTTP_init_router()
 HTTP_Handler HTTP_route(char *url)
 {
 	int (*handler)(HTTP_socket*,HTTP_socket*) = HTTP_node_value(head,url);
-	return handler != NULL ? handler : error404_handler;
+	return handler != NULL ? handler : default_handler;
 }
 
 int HTTP_destroy_router()
