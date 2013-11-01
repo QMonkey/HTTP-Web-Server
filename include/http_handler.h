@@ -8,11 +8,11 @@ extern "C"
 {
 #endif
 
-extern int default_handler(HTTP_socket *request,HTTP_socket *response);
-extern int error404_handler(HTTP_socket *request,HTTP_socket *response);
-extern int index_handler(HTTP_socket *request,HTTP_socket *response);
-extern int signin_handler(HTTP_socket *request,HTTP_socket *response);
-extern int signup_handler(HTTP_socket *request,HTTP_socket *response);
+extern int default_handler(HTTP_Socket *request,HTTP_Socket *response);
+extern int error404_handler(HTTP_Socket *request,HTTP_Socket *response);
+extern int index_handler(HTTP_Socket *request,HTTP_Socket *response);
+extern int signin_handler(HTTP_Socket *request,HTTP_Socket *response);
+extern int signup_handler(HTTP_Socket *request,HTTP_Socket *response);
 
 #ifdef __cplusplus
 }

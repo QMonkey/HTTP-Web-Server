@@ -12,8 +12,8 @@ extern "C"
 {
 #endif
 
-extern int HTTP_file_exists(char *path);
-extern int32_t HTTP_file_read_all(HTTP_string *buffer,char *path);
+extern int HTTP_File_is_exists(char *path);
+extern int32_t HTTP_File_read_all(HTTP_String *buffer,char *path);
 
 #ifdef __cplusplus
 }

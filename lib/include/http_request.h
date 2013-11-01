@@ -8,10 +8,12 @@ extern "C"
 {
 #endif
 
-extern int HTTP_request_init(HTTP_socket *request);
-extern int32_t HTTP_request_get_url(HTTP_socket *request,char *url);
-extern int32_t HTTP_request_get_header(HTTP_socket *request,char *key,char *content);
-extern int32_t HTTP_request_get_content(HTTP_socket *request,char *content);
+extern char *HTTP_Request_method[];
+extern int HTTP_Request_init(HTTP_Socket *request);
+extern int HTTP_Request_get_method(HTTP_Socket *request);
+extern int32_t HTTP_Request_get_url(HTTP_Socket *request,char *url);
+extern int32_t HTTP_Request_get_header(HTTP_Socket *request,char *key,char *content);
+extern int32_t HTTP_Request_get_content(HTTP_Socket *request,char *content);
 
 #ifdef __cplusplus
 }

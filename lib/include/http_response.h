@@ -6,10 +6,10 @@ extern "C"
 {
 #endif
 
-extern int HTTP_response_flush(HTTP_socket *response);
-extern int HTTP_response_set_header(HTTP_socket *response,char *header);
-extern int HTTP_response_set_content(HTTP_socket *response,char *content);
-extern int HTTP_response_set_param(HTTP_socket *response,HTTP_string *key,HTTP_string *value);
+extern int HTTP_Response_flush(HTTP_Socket *response);
+extern int HTTP_Response_set_header(HTTP_Socket *response,char *header);
+extern int HTTP_Response_set_content(HTTP_Socket *response,char *content);
+extern int HTTP_Response_set_param(HTTP_Socket *response,HTTP_String *key,HTTP_String *value);
 
 #ifdef __cplusplus
 }

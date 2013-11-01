@@ -15,15 +15,15 @@
 void* proc(void *arg)
 {
 	int cfd = (int)arg;
-	HTTP_socket *http_socket = HTTP_create_socket(cfd);
+	HTTP_Socket *http_socket = HTTP_Socket_create(cfd);
 	char content[1000] = {0};
-	HTTP_request_init(http_socket);
-	HTTP_read(http_socket->buffer,content);
+	HTTP_Request_init(http_socket);
+	HTTP_String_read(http_socket->buffer,content);
 	write(STDOUT_FILENO,content,1000);
-	int32_t size = HTTP_get_header(http_socket,"Accept",content);
+	int32_t size = HTTP_Socket_get_header(http_socket,"Accept",content);
 	write(STDOUT_FILENO,content,size);
 	fprintf(stdout,"\n");
-	HTTP_destroy_socket(http_socket,SHUT_RDWR);
+	HTTP_Socket_destroy(http_socket,SHUT_RDWR);
 	return NULL;
 }
 

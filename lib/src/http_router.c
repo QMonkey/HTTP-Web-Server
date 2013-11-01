@@ -6,23 +6,23 @@
 #include "http_urltree.h"
 #include "http_router.h"
 
-static HTTP_node *head = NULL;
+static HTTP_URLTree_node *head = NULL;
 
-int HTTP_init_router()
+int HTTP_Router_init()
 {
-	HTTP_insert_node(&head,"/html/",index_handler);
-	HTTP_insert_node(&head,"/html/index.html",index_handler);
-	HTTP_insert_node(&head,"/html/signIn.html",signin_handler);
-	HTTP_insert_node(&head,"/html/signUp.html",signup_handler);
+	HTTP_URLTree_insert_node(&head,"/html/",index_handler);
+	HTTP_URLTree_insert_node(&head,"/html/index.html",index_handler);
+	HTTP_URLTree_insert_node(&head,"/html/signIn.html",signin_handler);
+	HTTP_URLTree_insert_node(&head,"/html/signUp.html",signup_handler);
 }
 
-HTTP_Handler HTTP_route(char *url)
+HTTP_Handler HTTP_Router_route(char *url)
 {
-	int (*handler)(HTTP_socket*,HTTP_socket*) = HTTP_node_value(head,url);
+	int (*handler)(HTTP_Socket*,HTTP_Socket*) = HTTP_URLTree_node_value(head,url);
 	return handler != NULL ? handler : default_handler;
 }
 
-int HTTP_destroy_router()
+int HTTP_Router_destroy()
 {
-	return HTTP_destroy_tree(head);
+	return HTTP_URLTree_destroy(head);
 }

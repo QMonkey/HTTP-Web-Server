@@ -8,9 +8,9 @@ extern "C"
 {
 #endif
 
-extern int HTTP_init_router();
-extern HTTP_Handler HTTP_route(char *url);
-extern int HTTP_destroy_router();
+extern int HTTP_Router_init();
+extern HTTP_Handler HTTP_Router_route(char *url);
+extern int HTTP_Router_destroy();
 
 #ifdef __cplusplus
 }

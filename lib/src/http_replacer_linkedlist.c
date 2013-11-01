@@ -3,18 +3,18 @@
 #include "http_string.h"
 #include "http_replacer_linkedlist.h"
 
-HTTP_replacer_node* HTTP_replacer_create(char *begin,char *end,HTTP_string *value)
+HTTP_replacer_node* HTTP_replacer_create(char *begin,char *end,HTTP_String *value)
 {
 	HTTP_replacer_node *node = (HTTP_replacer_node*)malloc(sizeof(HTTP_replacer_node));
 	node->begin = begin;
 	node->end = end;
-	node->value = HTTP_string_copy(value);
+	node->value = HTTP_String_copy(value);
 	node->next = NULL;
 	return node;
 }
 
 HTTP_replacer_node* HTTP_replacer_insert(HTTP_replacer_node **head,
-		char *begin,char *end,HTTP_string *value)
+		char *begin,char *end,HTTP_String *value)
 {
 	if(head == NULL)
 	{
@@ -24,7 +24,7 @@ HTTP_replacer_node* HTTP_replacer_insert(HTTP_replacer_node **head,
 	if((*head)->begin == begin)
 	{
 		(*head)->end = end;
-		HTTP_string_adjust_to((*head)->value,value);
+		HTTP_String_adjust_to((*head)->value,value);
 	}
 	else if((*head)->begin < 0)
 	{
@@ -57,7 +57,7 @@ int HTTP_replacer_destroy_node(HTTP_replacer_node *node)
 	{
 		return -1;
 	}
-	HTTP_destroy_string(node->value);
+	HTTP_String_destroy(node->value);
 	free(node);
 	return 0;
 }

@@ -8,8 +8,8 @@
 typedef struct
 {
 	int sfd;
-	HTTP_string *buffer;
-} HTTP_socket;
+	HTTP_String *buffer;
+} HTTP_Socket;
 
 #define DEFAULT_BUFFER_LENGTH 1024
 
@@ -18,12 +18,12 @@ extern "C"
 {
 #endif
 
-extern HTTP_socket* HTTP_create_socket(int sfd);
-extern int HTTP_set_header(HTTP_socket *http_socket,char *header);
-extern int32_t HTTP_get_header(HTTP_socket *http_socket,char *key,char *content);
-extern int HTTP_set_content(HTTP_socket *http_socket,char *content);
-extern int32_t HTTP_get_content(HTTP_socket *http_socket,char *content);
-extern int HTTP_destroy_socket(HTTP_socket *http_socket,int how);
+extern HTTP_Socket* HTTP_Socket_create(int sfd);
+extern int HTTP_Socket_set_header(HTTP_Socket *http_socket,char *header);
+extern int32_t HTTP_Socket_get_header(HTTP_Socket *http_socket,char *key,char *content);
+extern int HTTP_Socket_set_content(HTTP_Socket *http_socket,char *content);
+extern int32_t HTTP_Socket_get_content(HTTP_Socket *http_socket,char *content);
+extern int HTTP_Socket_destroy(HTTP_Socket *http_socket,int how);
 
 #ifdef __cplusplus
 }

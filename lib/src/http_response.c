@@ -5,27 +5,27 @@
 #include "http_socket.h"
 #include "http_response.h"
 
-int HTTP_response_flush(HTTP_socket *response)
+int HTTP_Response_flush(HTTP_Socket *response)
 {
 	if(response == NULL)
 	{
 		return -1;
 	}
 
-	send(response->sfd,response->buffer->content,HTTP_capacity(response->buffer),MSG_DONTWAIT);
+	send(response->sfd,response->buffer->content,HTTP_String_capacity(response->buffer),MSG_DONTWAIT);
 	return 0;
 }
 
-int HTTP_response_set_param(HTTP_socket *response,HTTP_string *key,HTTP_string *value)
+int HTTP_Response_set_param(HTTP_Socket *response,HTTP_String *key,HTTP_String *value)
 {
 }
 
-int HTTP_response_set_header(HTTP_socket *response,char *header)
+int HTTP_Response_set_header(HTTP_Socket *response,char *header)
 {
-	return HTTP_set_header(response,header);
+	return HTTP_Socket_set_header(response,header);
 }
 
-int HTTP_response_set_content(HTTP_socket *response,char *content)
+int HTTP_Response_set_content(HTTP_Socket *response,char *content)
 {
-	return HTTP_set_content(response,content);
+	return HTTP_Socket_set_content(response,content);
 }

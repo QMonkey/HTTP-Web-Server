@@ -6,24 +6,24 @@
 #include "http_socket.h"
 #include "http_urltree.h"
 
-HTTP_node* HTTP_create_node(char *key,int (*handler)(HTTP_socket*,HTTP_socket*))
+HTTP_URLTree_node* HTTP_URLTree_create_node(char *key,int (*handler)(HTTP_Socket*,HTTP_Socket*))
 {
-	return HTTP_create_node3(key,strlen(key),handler);
+	return HTTP_URLTree_create_node3(key,strlen(key),handler);
 }
 
-HTTP_node* HTTP_create_node3(char *key,int32_t size,
-	int (*handler)(HTTP_socket*,HTTP_socket*))
+HTTP_URLTree_node* HTTP_URLTree_create_node3(char *key,int32_t size,
+	int (*handler)(HTTP_Socket*,HTTP_Socket*))
 {
-	HTTP_node *node = (HTTP_node*)malloc(sizeof(HTTP_node));
+	HTTP_URLTree_node *node = (HTTP_URLTree_node*)malloc(sizeof(HTTP_URLTree_node));
 	node->child = NULL;
 	node->sibling = NULL;
-	node->key = HTTP_create_string2(key,size);
+	node->key = HTTP_String_create2(key,size);
 	node->handler = handler;
 	return node;
 }
 
-HTTP_node* HTTP_insert_node(HTTP_node **node,char *url,
-	int (*handler)(HTTP_socket*,HTTP_socket*))
+HTTP_URLTree_node* HTTP_URLTree_insert_node(HTTP_URLTree_node **node,char *url,
+	int (*handler)(HTTP_Socket*,HTTP_Socket*))
 {
 	if(node == NULL || url == NULL || *url == 0)
 	{
@@ -38,16 +38,16 @@ HTTP_node* HTTP_insert_node(HTTP_node **node,char *url,
 	int32_t offset = (*ptr ? 1 : 0);
 	int32_t size = ptr - url + offset;
 	int flag = 0;
-	HTTP_node *ret_node = NULL;
+	HTTP_URLTree_node *ret_node = NULL;
 	do
 	{
 		flag = 0;
 		if(*node == NULL)
 		{
-			*node = HTTP_create_node3(url,size,NULL);
+			*node = HTTP_URLTree_create_node3(url,size,NULL);
 			if(*ptr != 0 && *(ptr+1) != 0)
 			{
-				ret_node = HTTP_insert_node(&((*node)->child),ptr+1,handler);
+				ret_node = HTTP_URLTree_insert_node(&((*node)->child),ptr+1,handler);
 			}
 			else
 			{
@@ -55,11 +55,11 @@ HTTP_node* HTTP_insert_node(HTTP_node **node,char *url,
 				ret_node = *node;
 			}
 		}
-		else if(!HTTP_strcmp((*node)->key,url,size))
+		else if(!HTTP_String_strcmp((*node)->key,url,size))
 		{
 			if(*ptr != 0 && *(ptr+1) != 0)
 			{
-				ret_node = HTTP_insert_node(&((*node)->child),ptr+1,handler);
+				ret_node = HTTP_URLTree_insert_node(&((*node)->child),ptr+1,handler);
 			}
 			else
 			{
@@ -79,11 +79,11 @@ HTTP_node* HTTP_insert_node(HTTP_node **node,char *url,
 	return ret_node;
 }
 
-HTTP_node* HTTP_find_node(HTTP_node *head,char *url)
+HTTP_URLTree_node* HTTP_URLTree_find_node(HTTP_URLTree_node *head,char *url)
 {
 }
 
-HTTP_Handler HTTP_node_value(HTTP_node *node,char *url)
+HTTP_Handler HTTP_URLTree_node_value(HTTP_URLTree_node *node,char *url)
 {
 	if(node == NULL || url == NULL || *url == 0)
 	{
@@ -96,16 +96,16 @@ HTTP_Handler HTTP_node_value(HTTP_node *node,char *url)
 		++ptr;
 	}
 	int32_t size = ptr - url + (*ptr ? 1 : 0);
-	int (*handler)(HTTP_socket*,HTTP_socket*) = NULL;
+	int (*handler)(HTTP_Socket*,HTTP_Socket*) = NULL;
 	int flag = 0;
 	do
 	{
 		flag = 0;
-		if(!HTTP_strcmp(node->key,url,size))
+		if(!HTTP_String_strcmp(node->key,url,size))
 		{
 			if(*ptr != 0 && *(ptr+1) != 0)
 			{
-				handler = HTTP_node_value(node->child,ptr+1);
+				handler = HTTP_URLTree_node_value(node->child,ptr+1);
 			}
 			else
 			{
@@ -127,25 +127,25 @@ HTTP_Handler HTTP_node_value(HTTP_node *node,char *url)
 	return handler;
 }
 
-int HTTP_destroy_tree(HTTP_node *head)
+int HTTP_URLTree_destroy(HTTP_URLTree_node *head)
 {
 	if(head == NULL)
 	{
 		return -1;
 	}
-	HTTP_destroy_tree(head->child);
-	HTTP_destroy_tree(head->sibling);
-	HTTP_destroy_node(head);
+	HTTP_URLTree_destroy(head->child);
+	HTTP_URLTree_destroy(head->sibling);
+	HTTP_URLTree_destroy_node(head);
 	return 0;
 }
 
-int HTTP_destroy_node(HTTP_node *node)
+int HTTP_URLTree_destroy_node(HTTP_URLTree_node *node)
 {
 	if(node == NULL)
 	{
 		return -1;
 	}
-	HTTP_destroy_string(node->key);
+	HTTP_String_destroy(node->key);
 	free(node);
 	return 0;
 }

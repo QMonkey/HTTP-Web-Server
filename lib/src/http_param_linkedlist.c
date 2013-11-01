@@ -3,16 +3,16 @@
 #include "http_string.h"
 #include "http_param_linkedlist.h"
 
-HTTP_param_node* HTTP_param_create(HTTP_string *key,HTTP_string *value)
+HTTP_param_node* HTTP_param_create(HTTP_String *key,HTTP_String *value)
 {
 	HTTP_param_node *node = (HTTP_param_node*)malloc(sizeof(HTTP_param_node));
-	node->key = HTTP_string_copy(key);
-	node->value = HTTP_string_copy(value);
+	node->key = HTTP_String_copy(key);
+	node->value = HTTP_String_copy(value);
 	return node;
 }
 
 HTTP_param_node* HTTP_param_insert(HTTP_param_node **head,
-		HTTP_string *key,HTTP_string *value)
+		HTTP_String *key,HTTP_String *value)
 {
 	if(head == NULL)
 	{
@@ -20,9 +20,9 @@ HTTP_param_node* HTTP_param_insert(HTTP_param_node **head,
 	}
 	int res;
 	HTTP_param_node *node = NULL;
-	if((res = HTTP_strcmp2((*head)->key,key)) == 0)
+	if((res = HTTP_String_strcmp2((*head)->key,key)) == 0)
 	{
-		HTTP_string_adjust_to((*head)->value,value);
+		HTTP_String_adjust_to((*head)->value,value);
 	}
 	else if(res < 0)
 	{
@@ -55,8 +55,8 @@ int HTTP_param_destroy_node(HTTP_param_node *node)
 	{
 		return -1;
 	}
-	HTTP_destroy_string(node->key);
-	HTTP_destroy_string(node->value);
+	HTTP_String_destroy(node->key);
+	HTTP_String_destroy(node->value);
 	free(node);
 	return 0;
 }

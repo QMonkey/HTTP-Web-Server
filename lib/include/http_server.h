@@ -6,7 +6,7 @@ extern "C"
 {
 #endif
 
-extern int HTTP_serve();
+extern int HTTP_Server_serve();
 
 #ifdef __cplusplus
 }

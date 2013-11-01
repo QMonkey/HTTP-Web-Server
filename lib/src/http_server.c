@@ -36,8 +36,8 @@ static void signal_proc(int signo)
 static void* proc(void *arg)
 {
 	int cfd = (int)arg;
-	HTTP_socket *request = HTTP_create_socket(cfd);
-	HTTP_socket *response = HTTP_create_socket(cfd);
+	HTTP_Socket *request = HTTP_Socket_create(cfd);
+	HTTP_Socket *response = HTTP_Socket_create(cfd);
 
 	fd_set rfds;
 	FD_ZERO(&rfds);
@@ -58,10 +58,10 @@ static void* proc(void *arg)
 			default:
 				if(FD_ISSET(cfd,&rfds))
 				{
-					HTTP_request_init(request);
-					size = HTTP_request_get_url(request,url);
+					HTTP_Request_init(request);
+					size = HTTP_Request_get_url(request,url);
 					url[size] = 0;
-					HTTP_route(url)(request,response);
+					HTTP_Router_route(url)(request,response);
 					flag = 0;
 				}
 				break;
@@ -69,16 +69,16 @@ static void* proc(void *arg)
 	}
 
 	FD_ZERO(&rfds);
-	HTTP_destroy_socket(request,SHUT_RD);
-	HTTP_destroy_socket(response,SHUT_WR);
+	HTTP_Socket_destroy(request,SHUT_RD);
+	HTTP_Socket_destroy(response,SHUT_WR);
 	return NULL;
 }
 
 /*
 static void handle(int sfd)
 {
-	HTTP_socket *request = HTTP_create_socket(sfd);
-	HTTP_socket *response = HTTP_create_socket(sfd);
+	HTTP_Socket *request = HTTP_create_socket(sfd);
+	HTTP_Socket *response = HTTP_create_socket(sfd);
 
 	HTTP_request_init(request);
 	char url[BUFFER_LENGTH] = {0};
@@ -92,7 +92,7 @@ static void handle(int sfd)
 }
 */
 
-int HTTP_serve()
+int HTTP_Server_serve()
 {
 /*
 	struct sigaction action;
@@ -131,7 +131,7 @@ int HTTP_serve()
 		perror("listen");
 		exit(1);
 	}
-	HTTP_init_router();
+	HTTP_Router_init();
 	while(1)
 	{
 		struct sockaddr addr;
@@ -154,6 +154,6 @@ int HTTP_serve()
 */
 	}
 	close(serversfd);
-	HTTP_destroy_router();
+	HTTP_Router_destroy();
 	return 0;
 }

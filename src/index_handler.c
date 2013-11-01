@@ -5,9 +5,27 @@
 #include "http_request.h"
 #include "http_response.h"
 
-int index_handler(HTTP_socket *request,HTTP_socket *response)
+static int do_get(HTTP_Socket *request,HTTP_Socket *response);
+static int do_post(HTTP_Socket *request,HTTP_Socket *response);
+
+int index_handler(HTTP_Socket *request,HTTP_Socket *response)
 {
-	HTTP_engine_render(response,"public/html/index.html",NULL);
+	if(HTTP_Request_get_method(request) == 0)
+	{
+		do_get(request,response);
+	}
+	return 0;
+}
+
+static int do_get(HTTP_Socket *request,HTTP_Socket *response)
+{
+	HTTP_Engine_render(response,"public/html/index.html",NULL);
 	fprintf(stdout,"index_handler\n");
+	return 0;
+}
+
+static int do_post(HTTP_Socket *request,HTTP_Socket *response)
+{
+	error404_handler(request,response);
 	return 0;
 }

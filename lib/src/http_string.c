@@ -4,11 +4,11 @@
 
 #include "http_string.h"
 
-static int HTTP_resize(HTTP_string *str,int32_t size);
+static int HTTP_String_resize(HTTP_String *str,int32_t size);
 
-HTTP_string* HTTP_create_string(int32_t size)
+HTTP_String* HTTP_String_create(int32_t size)
 {
-	HTTP_string *str = (HTTP_string*)malloc(sizeof(HTTP_string));
+	HTTP_String *str = (HTTP_String*)malloc(sizeof(HTTP_String));
 
 	str->content = (char*)malloc(sizeof(char) * size);
 
@@ -18,52 +18,52 @@ HTTP_string* HTTP_create_string(int32_t size)
 	return str;
 }
 
-HTTP_string* HTTP_create_string2(char *str,int32_t size)
+HTTP_String* HTTP_String_create2(char *str,int32_t size)
 {
-	HTTP_string *http_string = HTTP_create_string(size);
-	HTTP_write(http_string,str,size);
+	HTTP_String *http_string = HTTP_String_create(size);
+	HTTP_String_write(http_string,str,size);
 	return http_string;
 }
 
-HTTP_string* HTTP_string_copy(HTTP_string *str)
+HTTP_String* HTTP_String_copy(HTTP_String *str)
 {
-	int32_t capacity = HTTP_capacity(str);
-	HTTP_string *strbak = HTTP_create_string2(str->content,capacity);
+	int32_t capacity = HTTP_String_capacity(str);
+	HTTP_String *strbak = HTTP_String_create2(str->content,capacity);
 	strbak->capacity_end = strbak->begin + capacity;
 	memcpy(strbak->content,str->content,capacity);
 	return strbak;
 }
 
-HTTP_string* HTTP_string_adjust_to(HTTP_string *src,HTTP_string *dest)
+HTTP_String* HTTP_String_adjust_to(HTTP_String *src,HTTP_String *dest)
 {
 	if(src == NULL || dest == NULL)
 	{
 		return NULL;
 	}
 
-	HTTP_resize(src,HTTP_size(dest));
-	int32_t capacity = HTTP_capacity(dest);
+	HTTP_String_resize(src,HTTP_String_size(dest));
+	int32_t capacity = HTTP_String_capacity(dest);
 	src->capacity_end = src->content + capacity;
 	memcpy(src->content,dest->content,capacity);
 	return src;
 }
 
-int32_t HTTP_offset(HTTP_string *str)
+int32_t HTTP_String_offset(HTTP_String *str)
 {
 	return str->current - str->begin;
 }
 
-int32_t HTTP_size(HTTP_string *str)
+int32_t HTTP_String_size(HTTP_String *str)
 {
 	return str->end - str->begin;
 }
 
-int32_t HTTP_capacity(HTTP_string *str)
+int32_t HTTP_String_capacity(HTTP_String *str)
 {
 	return str->capacity_end - str->begin;
 }
 
-int32_t HTTP_seek(HTTP_string *str,int32_t flag,int32_t offset)
+int32_t HTTP_String_seek(HTTP_String *str,int32_t flag,int32_t offset)
 {
 	switch(flag)
 	{
@@ -73,7 +73,7 @@ int32_t HTTP_seek(HTTP_string *str,int32_t flag,int32_t offset)
 		offset += str->current - str->begin;
 		break;
 	case HTTP_STRING_END:
-		offset += HTTP_capacity(str);
+		offset += HTTP_String_capacity(str);
 		break;
 	default:
 		break;
@@ -88,19 +88,19 @@ int32_t HTTP_seek(HTTP_string *str,int32_t flag,int32_t offset)
 	return 0;
 }
 
-static int HTTP_resize(HTTP_string *str,int32_t size)
+static int HTTP_String_resize(HTTP_String *str,int32_t size)
 {
 	if(str == NULL)
 	{
 		return -1;
 	}
-	if(size < HTTP_size(str))
+	if(size < HTTP_String_size(str))
 	{
 		return 0;
 	}
 
 	char *new_str = (char*)malloc(sizeof(char) * size);
-	int32_t capacity = HTTP_capacity(str);
+	int32_t capacity = HTTP_String_capacity(str);
 	memcpy(new_str,str->content,capacity * sizeof(char));
 
 	int32_t offset = str->current - str->begin;
@@ -114,25 +114,25 @@ static int HTTP_resize(HTTP_string *str,int32_t size)
 	return 0;
 }
 
-int HTTP_strcmp(HTTP_string *str,char *cstr,int32_t size)
+int HTTP_String_strcmp(HTTP_String *str,char *cstr,int32_t size)
 {
-	int32_t ssize = HTTP_size(str);
+	int32_t ssize = HTTP_String_size(str);
 	int res = memcmp(str->content,cstr,size < ssize ? size : ssize);
 	res = (!res && ssize != size ? 
 		(ssize > size ? str->content[size] : cstr[ssize]) : res);
 	return res;
 }
 
-int HTTP_strcmp2(HTTP_string *first,HTTP_string *second)
+int HTTP_String_strcmp2(HTTP_String *first,HTTP_String *second)
 {
-	return HTTP_strcmp(first,second->content,HTTP_capacity(second));
+	return HTTP_String_strcmp(first,second->content,HTTP_String_capacity(second));
 }
 
-int HTTP_string_replace(HTTP_string *str,HTTP_string *src,HTTP_string *dest)
+int HTTP_String_replace(HTTP_String *str,HTTP_String *src,HTTP_String *dest)
 {
 }
 
-int32_t HTTP_readline(HTTP_string *str,char *dest)
+int32_t HTTP_String_readline(HTTP_String *str,char *dest)
 {
 	if(str == NULL || dest == NULL)
 	{
@@ -157,7 +157,7 @@ int32_t HTTP_readline(HTTP_string *str,char *dest)
 	return size;
 }
 
-int32_t HTTP_read(HTTP_string *str,char *dest)
+int32_t HTTP_String_read(HTTP_String *str,char *dest)
 {
 	if(str == NULL || dest == NULL)
 	{
@@ -171,7 +171,7 @@ int32_t HTTP_read(HTTP_string *str,char *dest)
 	return size;
 }
 
-int32_t HTTP_insert(HTTP_string *dest,char *src,int32_t size)
+int32_t HTTP_String_insert(HTTP_String *dest,char *src,int32_t size)
 {
 	if(dest == NULL || src == NULL)
 	{
@@ -180,27 +180,27 @@ int32_t HTTP_insert(HTTP_string *dest,char *src,int32_t size)
 
 	while(dest->capacity_end + size > dest->end)
 	{
-		HTTP_resize(dest,HTTP_size(dest)<<1);
+		HTTP_String_resize(dest,HTTP_String_size(dest)<<1);
 	}
-	memmove(dest->begin+size,dest->begin,HTTP_capacity(dest));
+	memmove(dest->begin+size,dest->begin,HTTP_String_capacity(dest));
 	memcpy(dest->begin,src,size);
 	return size;
 }
 
-int32_t HTTP_writeline(HTTP_string *str,char *src,int32_t size)
+int32_t HTTP_String_writeline(HTTP_String *str,char *src,int32_t size)
 {
 	if(str == NULL || src == NULL || size < 0)
 	{
 		return -1;
 	}
-	HTTP_write(str,src,size);
+	HTTP_String_write(str,src,size);
 	*str->capacity_end++ = '\r';
 	*str->capacity_end++ = '\n';
 
 	return size;
 }
 
-int32_t HTTP_write(HTTP_string *str,char *src,int32_t size)
+int32_t HTTP_String_write(HTTP_String *str,char *src,int32_t size)
 {	
 	if(str == NULL || src == NULL || size < 0)
 	{
@@ -209,7 +209,7 @@ int32_t HTTP_write(HTTP_string *str,char *src,int32_t size)
 
 	while(str->capacity_end + size > str->end)
 	{
-		HTTP_resize(str,HTTP_size(str)<<1);
+		HTTP_String_resize(str,HTTP_String_size(str)<<1);
 	}
 
 	memcpy(str->capacity_end,src,sizeof(char) * size);
@@ -218,7 +218,7 @@ int32_t HTTP_write(HTTP_string *str,char *src,int32_t size)
 	return size;
 }
 
-int HTTP_destroy_string(HTTP_string *str)
+int HTTP_String_destroy(HTTP_String *str)
 {
 	if(str == NULL)
 	{
