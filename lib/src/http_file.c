@@ -9,7 +9,8 @@
 
 int HTTP_file_exists(char *path)
 {
-	return access(path,F_OK) != -1;
+	struct stat st;
+	return stat(path,&st) != -1 && S_ISREG(st.st_mode);
 }
 
 int32_t HTTP_file_read_all(HTTP_string *buffer,char *path)
