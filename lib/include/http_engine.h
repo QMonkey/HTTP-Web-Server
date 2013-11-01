@@ -1,12 +1,15 @@
 #ifndef HTTP_ENGINE_H
 #define HTTP_ENGINE_H
 
+#include "http_socket.h"
+#include "http_param_linkedlist.h"
+
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
-extern int render(HTTP_socket *response,char *path,HTTP_param_node *args);
+extern int HTTP_engine_render(HTTP_socket *response,char *path,HTTP_param_node *args);
 
 #ifdef __cplusplus
 }

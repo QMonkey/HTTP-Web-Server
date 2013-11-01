@@ -17,7 +17,7 @@ static char* substr(const char*str,unsigned start, unsigned end)
 int main(int argc, char** argv)
 {
     char *pattern = NULL; 
-    int x, z, lno = 0, cflags = 0; 
+    int x, z, lno = 0, cflags = REG_EXTENDED | REG_NEWLINE;
     char ebuf[128], lbuf[256]; 
     regex_t reg; 
 

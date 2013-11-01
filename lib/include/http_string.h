@@ -34,6 +34,7 @@ extern int HTTP_strcmp2(HTTP_string *first,HTTP_string *second);
 extern int HTTP_string_replace(HTTP_string *str,HTTP_string *src,HTTP_string *dest);
 extern int32_t HTTP_readline(HTTP_string *str,char *dest);
 extern int32_t HTTP_read(HTTP_string *str,char *dest);
+extern int32_t HTTP_insert(HTTP_string *dest,char *src,int32_t size);
 extern int32_t HTTP_writeline(HTTP_string *str,char *src,int32_t size);
 extern int32_t HTTP_write(HTTP_string *str,char *src,int32_t size);
 extern int HTTP_destroy_string(HTTP_string *str);

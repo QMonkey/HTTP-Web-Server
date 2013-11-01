@@ -171,6 +171,22 @@ int32_t HTTP_read(HTTP_string *str,char *dest)
 	return size;
 }
 
+int32_t HTTP_insert(HTTP_string *dest,char *src,int32_t size)
+{
+	if(dest == NULL || src == NULL)
+	{
+		return -1;
+	}
+
+	while(dest->capacity_end + size > dest->end)
+	{
+		HTTP_resize(dest,HTTP_size(dest)<<1);
+	}
+	memmove(dest->begin+size,dest->begin,HTTP_capacity(dest));
+	memcpy(dest->begin,src,size);
+	return size;
+}
+
 int32_t HTTP_writeline(HTTP_string *str,char *src,int32_t size)
 {
 	if(str == NULL || src == NULL || size < 0)
@@ -191,7 +207,7 @@ int32_t HTTP_write(HTTP_string *str,char *src,int32_t size)
 		return -1;
 	}
 
-	if(str->capacity_end + size > str->end)
+	while(str->capacity_end + size > str->end)
 	{
 		HTTP_resize(str,HTTP_size(str)<<1);
 	}

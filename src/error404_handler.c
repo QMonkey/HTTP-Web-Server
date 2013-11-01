@@ -1,13 +1,13 @@
 #include <stdio.h>
 
+#include "http_engine.h"
 #include "http_socket.h"
 #include "http_request.h"
 #include "http_response.h"
 
 int error404_handler(HTTP_socket *request,HTTP_socket *response)
 {
-	HTTP_response_set_content(response,"<h1>404</h1>");
-	HTTP_response_flush(response);
-	fprintf(stdout,"error404\n");
+	HTTP_engine_render(response,"public/html/error404.html",NULL);
+	fprintf(stdout,"error404_handler\n");
 	return 0;
 }

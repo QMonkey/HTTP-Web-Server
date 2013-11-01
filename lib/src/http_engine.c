@@ -7,23 +7,43 @@
 #include "http_socket.h"
 #include "http_response.h"
 #include "http_param_linkedlist.h"
+#include "http_replacer_linkedlist.h"
 
 static int HTTP_match_param(HTTP_string *buffer,HTTP_param_node *args,
 		HTTP_replacer_node **replacer)
 {
+	/*
 	regex_t reg;
+	HTTP_write(buffer,"\0",1);
 	while(args != NULL)
 	{
+		HTTP_insert(args->key,"${\s*",5);
+		HTTP_write(args->key,"\s*}\0",5);
+		HTTP_write(args->value,"\0",1);
+		if(!regcomp(&reg,args->key->content,0))
+		{
+			fprintf(stderr,"regcomp\n");
+			return -1;
+		}
+		int nmatch = reg.re_nsub + 1;
+		regmatch_t *pm = (regmatch_t*)malloc(sizeof(regmatch_t) * nmatch);
+		if(!regexec(&reg,buffer,nmatch,pm,0))
+		{
+			fprintf(stderr,"regexec\n");
+			return -1;
+		}
 	}
+	*/
 }
 
-int render(HTTP_socket *response,char *path,HTTP_param_node *args)
+int HTTP_engine_render(HTTP_socket *response,char *path,HTTP_param_node *args)
 {
 	if(response == NULL || path == NULL)
 	{
 		return -1;
 	}
-
+	HTTP_file_read_all(response->buffer,path);
+/*
 	HTTP_string *buffer = HTTP_create_string(FILE_BUFFER_LENGTH);
 	HTTP_file_read_all(buffer,path);
 	HTTP_replacer_node *replacer = NULL;
@@ -34,7 +54,7 @@ int render(HTTP_socket *response,char *path,HTTP_param_node *args)
 		HTTP_response_set_param(response,args->key,args->value);
 		HTTP_param_pop(&args);
 	}
-
+*/
 	HTTP_response_flush(response);
 	return 0;
 }
