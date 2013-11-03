@@ -2,6 +2,7 @@
 #define HTTP_REQUEST_H
 
 #include <stdint.h>
+#include "http_param_linkedlist.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -11,6 +12,7 @@ extern "C"
 extern char *HTTP_Request_method[];
 extern int HTTP_Request_init(HTTP_Socket *request);
 extern int HTTP_Request_get_method(HTTP_Socket *request);
+extern HTTP_Param_node* HTTP_Request_get_params(HTTP_Socket *request);
 extern int32_t HTTP_Request_get_url(HTTP_Socket *request,char *url);
 extern int32_t HTTP_Request_get_header(HTTP_Socket *request,char *key,char *content);
 extern int32_t HTTP_Request_get_content(HTTP_Socket *request,char *content);

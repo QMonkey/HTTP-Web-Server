@@ -33,7 +33,7 @@ static void signal_proc(int signo)
 }
 */
 
-static void* proc(void *arg)
+static void* dispatcher(void *arg)
 {
 	int cfd = (int)arg;
 	HTTP_Socket *request = HTTP_Socket_create(cfd);
@@ -141,7 +141,7 @@ int HTTP_Server_serve()
 		{
 			continue;
 		}
-		pthread_create(malloc(sizeof(pthread_t)),NULL,proc,(void*)clientsfd);
+		pthread_create(malloc(sizeof(pthread_t)),NULL,dispatcher,(void*)clientsfd);
 /*
 		if(!fork())
 		{

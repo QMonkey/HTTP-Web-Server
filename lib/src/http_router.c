@@ -14,6 +14,8 @@ int HTTP_Router_init()
 	HTTP_URLTree_insert_node(&head,"/html/index.html",index_handler);
 	HTTP_URLTree_insert_node(&head,"/html/signIn.html",signin_handler);
 	HTTP_URLTree_insert_node(&head,"/html/signUp.html",signup_handler);
+	HTTP_URLTree_insert_node(&head,"/html/verifySignIn",verify_signin_handler);
+	HTTP_URLTree_insert_node(&head,"/html/verifySignUp",verify_signup_handler);
 }
 
 HTTP_Handler HTTP_Router_route(char *url)

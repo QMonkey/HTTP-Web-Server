@@ -80,8 +80,52 @@ int32_t HTTP_Request_get_url(HTTP_Socket *request,char *url)
 	return size;
 }
 
-HTTP_param_node* HTTP_Request_get_param(HTTP_Socket *request)
+HTTP_Param_node* HTTP_Request_get_params(HTTP_Socket *request)
 {
+	char *begin = NULL;
+	char buffer[DEFAULT_BUFFER_LENGTH];
+	switch(HTTP_Request_get_method(request))
+	{
+	case 0:
+		begin = request->buffer->begin;
+		while(*begin++ != 0);
+		break;
+	case 1:
+		HTTP_String_seek(request->buffer,HTTP_STRING_BEGIN,0);
+		while(HTTP_String_readline(request->buffer,buffer));
+		begin = request->buffer->current;
+		break;
+	default:
+		break;
+	}
+	char *scanner = begin;
+	HTTP_Param_node *head = NULL;
+
+	HTTP_String *key = NULL;
+	HTTP_String *value = NULL;
+	while(*begin != ' ')
+	{
+		while(*scanner != '=' && *scanner != '&' && *scanner != ' ')
+		{
+			++scanner;
+		}
+		switch(*scanner)
+		{
+		case '=':
+			key = HTTP_String_create2(begin,scanner-begin);
+			break;
+		case '&':
+			value = HTTP_String_create2(begin,scanner-begin);
+			HTTP_Param_insert(&head,key,value);
+			HTTP_String_destroy(key);
+			HTTP_String_destroy(value);
+			break;
+		default:
+			break;
+		}
+		begin = scanner++;
+	}
+	return head;
 }
 
 int32_t HTTP_Request_get_header(HTTP_Socket *request,char *key,char *content)

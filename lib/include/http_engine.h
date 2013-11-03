@@ -9,7 +9,7 @@ extern "C"
 {
 #endif
 
-extern int HTTP_Engine_render(HTTP_Socket *response,char *path,HTTP_param_node *args);
+extern int HTTP_Engine_render(HTTP_Socket *response,char *path,HTTP_Param_node *args);
 
 #ifdef __cplusplus
 }

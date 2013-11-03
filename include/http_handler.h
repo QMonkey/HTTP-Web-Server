@@ -13,6 +13,8 @@ extern int error404_handler(HTTP_Socket *request,HTTP_Socket *response);
 extern int index_handler(HTTP_Socket *request,HTTP_Socket *response);
 extern int signin_handler(HTTP_Socket *request,HTTP_Socket *response);
 extern int signup_handler(HTTP_Socket *request,HTTP_Socket *response);
+extern int verify_signin_handler(HTTP_Socket *request,HTTP_Socket *response);
+extern int verify_signup_handler(HTTP_Socket *request,HTTP_Socket *response);
 
 #ifdef __cplusplus
 }

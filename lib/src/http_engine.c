@@ -9,7 +9,7 @@
 #include "http_param_linkedlist.h"
 #include "http_replacer_linkedlist.h"
 
-static int HTTP_Engine_match_param(HTTP_String *buffer,HTTP_param_node *args,
+static int HTTP_Engine_match_param(HTTP_String *buffer,HTTP_Param_node *args,
 		HTTP_replacer_node **replacer)
 {
 	/*
@@ -36,7 +36,7 @@ static int HTTP_Engine_match_param(HTTP_String *buffer,HTTP_param_node *args,
 	*/
 }
 
-int HTTP_Engine_render(HTTP_Socket *response,char *path,HTTP_param_node *args)
+int HTTP_Engine_render(HTTP_Socket *response,char *path,HTTP_Param_node *args)
 {
 	if(response == NULL || path == NULL || HTTP_File_read_all(response->buffer,path) == -1)
 	{
