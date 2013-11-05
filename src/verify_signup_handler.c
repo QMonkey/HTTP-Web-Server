@@ -11,9 +11,17 @@ static int do_post(HTTP_Socket *request,HTTP_Socket *response);
 
 int verify_signup_handler(HTTP_Socket *request,HTTP_Socket *response)
 {
-	if(HTTP_Request_get_method(request) == 0)
+	switch(HTTP_Request_get_method(request))
 	{
+	case 0:
 		do_get(request,response);
+		break;
+	case 1:
+		do_post(request,response);
+		break;
+	default:
+		error404_handler(request,response);
+		break;
 	}
 	return 0;
 }

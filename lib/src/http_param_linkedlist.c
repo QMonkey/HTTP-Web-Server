@@ -30,7 +30,7 @@ HTTP_Param_node* HTTP_Param_insert(HTTP_Param_node **head,
 	{
 		HTTP_String_adjust_to((*head)->value,value);
 	}
-	else if(res < 0)
+	else if(res > 0)
 	{
 		node = HTTP_Param_create_node(key,value);
 		node->next = *head;

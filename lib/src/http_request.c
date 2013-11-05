@@ -1,4 +1,5 @@
 #include <sys/socket.h>
+#include <unistd.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
@@ -39,17 +40,17 @@ int HTTP_Request_get_method(HTTP_Socket *request)
 	}
 	int msize = scanner - buff;
 	int res = -1;
-	int i = 0;
-	while(i < 2)
+	int i;
+	for(i = 0; i < 2; ++i)
 	{
-		int32_t rmsize = strlen(*HTTP_Request_method);
+		int32_t rmsize = strlen(HTTP_Request_method[i]);
 		if(msize != rmsize)
 		{
 			continue;
 		}
 		else
 		{
-			res = strncmp(*HTTP_Request_method,buff,msize);
+			res = strncmp(HTTP_Request_method[i],buff,msize);
 		}
 		if(res == 0)
 		{
@@ -83,17 +84,32 @@ int32_t HTTP_Request_get_url(HTTP_Socket *request,char *url)
 HTTP_Param_node* HTTP_Request_get_params(HTTP_Socket *request)
 {
 	char *begin = NULL;
-	char buffer[DEFAULT_BUFFER_LENGTH];
+	char *end = NULL;
+	char buffer[DEFAULT_BUFFER_LENGTH] = {0};
+	int32_t hsize = 0;
+	int32_t size = 0;
 	switch(HTTP_Request_get_method(request))
 	{
 	case 0:
 		begin = request->buffer->begin;
-		while(*begin++ != 0);
+		while(*begin != ' ')
+		{
+			++begin;
+		}
+		end = ++begin;
+		while(*end != ' ')
+		{
+			++end;
+		}
 		break;
 	case 1:
 		HTTP_String_seek(request->buffer,HTTP_STRING_BEGIN,0);
+		hsize = HTTP_Request_get_header(request,"Content-Length",buffer);
+		buffer[hsize] = 0;
+		size = atoi(buffer);
 		while(HTTP_String_readline(request->buffer,buffer));
 		begin = request->buffer->current;
+		end = begin + size;
 		break;
 	default:
 		break;
@@ -103,11 +119,19 @@ HTTP_Param_node* HTTP_Request_get_params(HTTP_Socket *request)
 
 	HTTP_String *key = NULL;
 	HTTP_String *value = NULL;
-	while(*begin != ' ')
+	while(1)
 	{
-		while(*scanner != '=' && *scanner != '&' && *scanner != ' ')
+		while(*scanner != '=' && *scanner != '&' && scanner != end)
 		{
 			++scanner;
+		}
+		if(scanner == end)
+		{
+			value = HTTP_String_create2(begin,scanner-begin);
+			HTTP_Param_insert(&head,key,value);
+			HTTP_String_destroy(key);
+			HTTP_String_destroy(value);
+			break;
 		}
 		switch(*scanner)
 		{
@@ -123,7 +147,7 @@ HTTP_Param_node* HTTP_Request_get_params(HTTP_Socket *request)
 		default:
 			break;
 		}
-		begin = scanner++;
+		begin = ++scanner;
 	}
 	return head;
 }
