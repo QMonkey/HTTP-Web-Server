@@ -9,6 +9,10 @@
 	<body>
 		<form id="signUpForm" action="verifySignUp" method="post">
 			<ul>
+				<span id="errmsg" style="color:red; display:
+					none">
+					两次输入的密码不一致，请重新输入。
+				</span>
 				<li>用户名：<input type="text" name="name"></li>
 				<li>密码：<input id="psw" type="password" name="psw"></li>
 				<li>确认密码：<input id="verifyPsw" type="password"></li>
