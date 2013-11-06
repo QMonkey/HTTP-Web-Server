@@ -92,9 +92,13 @@ HTTP_Param_node* HTTP_Request_get_params(HTTP_Socket *request)
 	{
 	case 0:
 		begin = request->buffer->begin;
-		while(*begin != ' ')
+		while(*begin != '\r' && *begin != '?')
 		{
 			++begin;
+		}
+		if(*begin == '\r')
+		{
+			return NULL;
 		}
 		end = ++begin;
 		while(*end != ' ')
@@ -127,10 +131,13 @@ HTTP_Param_node* HTTP_Request_get_params(HTTP_Socket *request)
 		}
 		if(scanner == end)
 		{
-			value = HTTP_String_create2(begin,scanner-begin);
-			HTTP_Param_insert(&head,key,value);
-			HTTP_String_destroy(key);
-			HTTP_String_destroy(value);
+			if(key != NULL)
+			{
+				value = HTTP_String_create2(begin,scanner-begin);
+				HTTP_Param_insert(&head,key,value);
+				HTTP_String_destroy(key);
+				HTTP_String_destroy(value);
+			}
 			break;
 		}
 		switch(*scanner)
@@ -143,6 +150,8 @@ HTTP_Param_node* HTTP_Request_get_params(HTTP_Socket *request)
 			HTTP_Param_insert(&head,key,value);
 			HTTP_String_destroy(key);
 			HTTP_String_destroy(value);
+			key = NULL;
+			value = NULL;
 			break;
 		default:
 			break;

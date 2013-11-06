@@ -128,10 +128,6 @@ int HTTP_String_strcmp2(HTTP_String *first,HTTP_String *second)
 	return HTTP_String_strcmp(first,second->content,HTTP_String_capacity(second));
 }
 
-int HTTP_String_replace(HTTP_String *str,HTTP_String *src,HTTP_String *dest)
-{
-}
-
 int32_t HTTP_String_readline(HTTP_String *str,char *dest)
 {
 	if(str == NULL || dest == NULL)
@@ -216,6 +212,16 @@ int32_t HTTP_String_write(HTTP_String *str,char *src,int32_t size)
 	str->capacity_end += size;
 
 	return size;
+}
+
+int HTTP_String_clear(HTTP_String *str)
+{
+	if(str == NULL)
+	{
+		return -1;
+	}
+	str->current = str->capacity_end = str->begin;
+	return 0;
 }
 
 int HTTP_String_destroy(HTTP_String *str)

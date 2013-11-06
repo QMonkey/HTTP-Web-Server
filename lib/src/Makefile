@@ -6,7 +6,7 @@ CC = gcc
 all: $(PROG)
 
 $(PROG): $(OBJS)
-	$(CC) -g -o $@ $(OBJS) ../../src/*.o -lpthread
+	$(CC) -g -o $@ $(OBJS) ../../src/*.o -lpthread `mysql_config --cflags --libs`
 	make -C test
 
 $(OBJS): %.o:%.c

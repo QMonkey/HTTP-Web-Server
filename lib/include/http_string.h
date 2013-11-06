@@ -31,12 +31,12 @@ extern int HTTP_String_offset(HTTP_String *str);
 extern int HTTP_String_seek(HTTP_String *str,int32_t flag,int32_t offset);
 extern int HTTP_String_strcmp(HTTP_String *str,char *cstr,int32_t size);
 extern int HTTP_String_strcmp2(HTTP_String *first,HTTP_String *second);
-extern int HTTP_String_replace(HTTP_String *str,HTTP_String *src,HTTP_String *dest);
 extern int32_t HTTP_String_readline(HTTP_String *str,char *dest);
 extern int32_t HTTP_String_read(HTTP_String *str,char *dest);
 extern int32_t HTTP_String_insert(HTTP_String *dest,char *src,int32_t size);
 extern int32_t HTTP_String_writeline(HTTP_String *str,char *src,int32_t size);
 extern int32_t HTTP_String_write(HTTP_String *str,char *src,int32_t size);
+extern int HTTP_String_clear(HTTP_String *str);
 extern int HTTP_String_destroy(HTTP_String *str);
 
 #ifdef __cplusplus

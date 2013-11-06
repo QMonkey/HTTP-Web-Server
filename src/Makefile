@@ -4,7 +4,7 @@ CC = gcc
 all: $(OBJS)
 
 $(OBJS): %.o:%.c
-	$(CC) -g -c $< -I ../include -I ../lib/include
+	$(CC) -g -c $< -I ../include -I ../lib/include `mysql_config --cflags --libs`
 
 clean:
 	-rm -rf $(OBJS)
