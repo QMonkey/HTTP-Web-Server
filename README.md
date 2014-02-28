@@ -1,1 +1,1 @@
-An HTTP web server implemented by C
+A HTTP web server implemented by C
